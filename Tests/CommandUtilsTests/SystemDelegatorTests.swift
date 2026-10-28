@@ -258,10 +258,10 @@ private func readWindowsPID(from file: URL) throws -> DWORD {
 private func waitUntilWindowsProcessStops(_ processID: DWORD) -> Bool {
     let deadline = Date().addingTimeInterval(5)
     while Date() < deadline {
-        if let process = OpenProcess(DWORD(PROCESS_QUERY_LIMITED_INFORMATION), 0, processID) {
+        if let process = OpenProcess(DWORD(PROCESS_QUERY_LIMITED_INFORMATION), false, processID) {
             defer { CloseHandle(process) }
             var exitCode: DWORD = 0
-            if GetExitCodeProcess(process, &exitCode) != 0, exitCode != DWORD(259) {
+            if GetExitCodeProcess(process, &exitCode), exitCode != DWORD(259) {
                 return true
             }
         } else {
