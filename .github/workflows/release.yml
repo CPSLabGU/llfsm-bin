@@ -1,7 +1,7 @@
 name: Build Release Artifacts
 
 on:
-  workflow_call:
+  workflow_dispatch:
 
 jobs:
   build_archives:
