@@ -1,11 +1,7 @@
-@testable import llfsm_bin
 import Testing
 
-/// Default test.
+/// Mock test function.
 @Test
-func example() async throws {
-    // Write your test here and use APIs like `#expect(...)` to check expected conditions.
-    // Swift Testing Documentation
-    // https://swiftpackageindex.com/swiftlang/swift-testing/documentation
+func testTrue() {
     #expect(true)
 }

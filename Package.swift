@@ -34,14 +34,25 @@ let package = Package(
         ),
         .target(
             name: "CommandUtils",
-            dependencies: [.product(name: "ArgumentParser", package: "swift-argument-parser")]
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .target(name: "ProcessTree"),
+            ]
+        ),
+        .target(
+            name: "ProcessTree",
+            publicHeadersPath: "include"
         ),
         .testTarget(
             name: "llfsm_binTests",
-            dependencies: ["llfsm_bin"],
+            dependencies: [.target(name: "llfsm_bin"), .target(name: "CommandUtils")],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency")
             ],
+        ),
+        .testTarget(
+            name: "CommandUtilsTests",
+            dependencies: [.target(name: "CommandUtils")]
         ),
     ]
 )

@@ -1,5 +1,6 @@
 import ArgumentParser
 import Foundation
+import ProcessTree
 
 /// A command that delegates to a system binary.
 public protocol SystemDelegator {
@@ -12,7 +13,7 @@ public protocol SystemDelegator {
 
 /// Add default implementations for the `SystemDelegator` protocol methods.
 extension SystemDelegator {
-    /// Find and execute the binary with the given name.
+    /// Find and execute the binary, shutting down its process tree when interrupted.
     public func executeCommand(name: String, arguments: [String]) throws {
         guard let executableURL = self.findExecutable(named: name) else {
             throw ValidationError(
@@ -20,13 +21,31 @@ extension SystemDelegator {
                     + "Have you installed the llfsm binary and added it to your PATH?"
             )
         }
-        let process = Process()
-        process.executableURL = executableURL
-        process.arguments = arguments
-        try process.run()
-        process.waitUntilExit()
-        guard process.terminationStatus == EXIT_SUCCESS else {
-            throw ExitCode(process.terminationStatus)
+        var exitStatus: Int32 = 0
+        let errorCode = executableURL.path.withCString { executable in
+            withCStringArguments(arguments) { argumentPointers in
+                argumentPointers.withUnsafeBufferPointer { buffer in
+                    process_tree_run(
+                        executable,
+                        buffer.baseAddress,
+                        2_000,
+                        &exitStatus
+                    )
+                }
+            }
+        }
+        guard errorCode == 0 else {
+            throw NSError(
+                domain: "ProcessTree",
+                code: Int(errorCode),
+                userInfo: [
+                    NSLocalizedDescriptionKey:
+                        "Could not execute '\(executableURL.path)': \(String(cString: strerror(errorCode)))"
+                ]
+            )
+        }
+        guard exitStatus == EXIT_SUCCESS else {
+            throw ExitCode(exitStatus)
         }
     }
 
@@ -60,4 +79,25 @@ extension SystemDelegator {
         }
         return nil
     }
+}
+
+/// Executes the given closure with the C string representations of the provided arguments.
+private func withCStringArguments<Result>(
+    _ arguments: [String],
+    at index: Int = 0,
+    pointers: [UnsafePointer<CChar>?] = [],
+    body: ([UnsafePointer<CChar>?]) -> Result
+) -> Result {
+    guard index < arguments.count else {
+        return body(pointers + [nil])
+    }
+    return arguments[index]
+        .withCString { argument in
+            withCStringArguments(
+                arguments,
+                at: index + 1,
+                pointers: pointers + [argument],
+                body: body
+            )
+        }
 }
