@@ -1,15 +1,102 @@
 name: Build Release Artifacts
 
 on:
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
-  build_release:
-    uses: cpslabgu/swift-workflows/.github/workflows/release.yml@main
-    with:
-      release_artifacts: |
-        .build/release/llfsm-verify
-        .build/release/llfsm-verify.exe
-    secrets:
-      SSH_PRIVATE_KEY: ${{ secrets.WORKFLOWS_SSH_PRIVATE_KEY }}
-      SSH_PUBLIC_KEY: ${{ secrets.WORKFLOWS_SSH_PUBLIC_KEY }}
+  build_archives:
+    strategy:
+      matrix:
+        os: ${{ fromJSON('["ubuntu-latest", "ubuntu-24.04-arm", "macos-latest", "macos-26-intel", "windows-latest", "windows-11-arm"]') }}
+    name: Build Release Artifact on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - if: ${{ runner.os == 'Linux' }}
+        run: |
+          sudo apt-get update && sudo apt-get -y install libcurl4-openssl-dev
+          curl -O https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gz && \
+            tar zxf swiftly-$(uname -m).tar.gz && \
+            ./swiftly init --quiet-shell-followup --assume-yes --skip-install && \
+            . "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" && \
+            hash -r
+          swiftly install --assume-yes latest
+
+      - if: ${{ runner.os == 'macOS' }}
+        run: |
+          curl -O https://download.swift.org/swiftly/darwin/swiftly.pkg && \
+            installer -pkg swiftly.pkg -target CurrentUserHomeDirectory && \
+            ~/.swiftly/bin/swiftly init --quiet-shell-followup --assume-yes --skip-install && \
+            . "${SWIFTLY_HOME_DIR:-$HOME/.swiftly}/env.sh" && \
+            hash -r
+          swiftly install --assume-yes latest
+    
+      - if: ${{ runner.os == 'Windows' }}
+        uses: SwiftyLab/setup-swift@latest
+        with:
+          swift-version: latest
+
+      - if: ${{ runner.os == 'Linux' }}
+        name: Setup SSH Key
+        run: | 
+          rm -rf ~/.ssh
+          mkdir -m 0700 ~/.ssh
+          echo "${{ secrets.WORKFLOWS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "${{ secrets.WORKFLOWS_SSH_PUBLIC_KEY }}" > ~/.ssh/id_ed25519.pub
+          chmod 0600 ~/.ssh/id_ed25519
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_ed25519
+
+      - if: ${{ runner.os != 'Linux' }}
+        name: Setup SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.WORKFLOWS_SSH_PRIVATE_KEY }}
+
+      - name: Checkout repo
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ref: ${{ github.ref }}
+          path: llfsm-bin
+      
+      - name: Checkout LLFSMGenerate
+        uses: actions/checkout@v7
+        with:
+          repository: CPSLabGU/LLFSMGenerate
+          fetch-depth: 0
+          fetch-tags: true
+          ref: 3.0.0
+          path: LLFSMGenerate
+
+      - name: Checkout VHDLModelChecker
+        uses: actions/checkout@v7
+        with:
+          repository: CPSLabGU/VHDLModelChecker
+          fetch-depth: 0
+          fetch-tags: true
+          ref: 0.2.0
+          path: VHDLModelChecker
+      
+      #- name: Reconfigure Private Repo URLs
+      #  run: sed -i 's/git@github.com:/https:\/\/${{ secrets.ACCESS_TOKEN }}@github.com\//g' Package.swift
+
+      - name: Compile Binaries
+        run: |
+          cd ${{ github.workspace }}/LLFSMGenerate && swift build -c release
+          cd ${{ github.workspace }}/VHDLModelChecker && swift build -c release
+          cd ${{ github.workspace }}/llfsm-bin && swift build -c release
+    
+      - name: Upload Release Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: llfsm_${{ runner.os }}_${{ runner.arch }}
+          path: |
+            LLFSMGenerate/.build/release/llfsm-generate
+            LLFSMGenerate/.build/release/llfsm-generate.exe
+            VHDLModelChecker/.build/release/llfsm-verify
+            VHDLModelChecker/.build/release/llfsm-verify.exe
+            llfsm-bin/.build/release/llfsm
+            llfsm-bin/.build/release/llfsm.exe
+          include-hidden-files: true
