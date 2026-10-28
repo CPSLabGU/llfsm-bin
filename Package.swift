@@ -6,6 +6,12 @@ import PackageDescription
 /// Package manifest.
 let package = Package(
     name: "llfsm-bin",
+    products: [
+        .executable(
+            name: "llfsm",
+            targets: ["llfsm_bin"]
+        )
+    ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.3.0"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.4.0"),

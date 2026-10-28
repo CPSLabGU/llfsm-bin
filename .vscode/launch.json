@@ -19,6 +19,26 @@
             "target": "llfsm_bin",
             "configuration": "release",
             "preLaunchTask": "swift: Build Release llfsm_bin"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:llfsm-bin}",
+            "name": "Debug llfsm",
+            "target": "llfsm",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug llfsm"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:llfsm-bin}",
+            "name": "Release llfsm",
+            "target": "llfsm",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release llfsm"
         }
     ]
 }
