@@ -15,9 +15,26 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .executableTarget(
             name: "llfsm_bin",
+            dependencies: [
+                .target(name: "PLDCommands")
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency")
             ],
+        ),
+        .target(
+            name: "PLDCommands",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .target(name: "CommandUtils"),
+            ],
+            swiftSettings: [
+                .enableUpcomingFeature("ApproachableConcurrency")
+            ],
+        ),
+        .target(
+            name: "CommandUtils",
+            dependencies: [.product(name: "ArgumentParser", package: "swift-argument-parser")]
         ),
         .testTarget(
             name: "llfsm_binTests",

@@ -6,6 +6,6 @@
 enum LLFSMBin {
     /// Main function.
     static func main() {
-        print("Hello, world!")
+        LLFSMCommand.main()
     }
 }
