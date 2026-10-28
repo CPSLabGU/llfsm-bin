@@ -2,6 +2,10 @@ import ArgumentParser
 import Foundation
 import ProcessTree
 
+#if os(Windows)
+import WinSDK
+#endif
+
 /// A command that delegates to a system binary.
 public protocol SystemDelegator {
     /// Execute the delegate command.
@@ -40,7 +44,7 @@ extension SystemDelegator {
                 code: Int(errorCode),
                 userInfo: [
                     NSLocalizedDescriptionKey:
-                        "Could not execute '\(executableURL.path)': \(String(cString: strerror(errorCode)))"
+                        "Could not execute '\(executableURL.path)': \(systemErrorMessage(for: errorCode))"
                 ]
             )
         }
@@ -79,6 +83,31 @@ extension SystemDelegator {
         }
         return nil
     }
+}
+
+/// Translate a platform error returned by `process_tree_run` into a readable message.
+///
+/// POSIX platforms return `errno` values, whereas Windows returns Win32 error codes.
+private func systemErrorMessage(for code: Int32) -> String {
+    #if os(Windows)
+    var buffer = [WCHAR](repeating: 0, count: 1024)
+    let length = FormatMessageW(
+        DWORD(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS),
+        nil,
+        DWORD(code),
+        0,
+        &buffer,
+        DWORD(buffer.count),
+        nil
+    )
+    guard length > 0 else {
+        return "Unknown error \(code)"
+    }
+    return String(decoding: buffer.prefix(Int(length)), as: UTF16.self)
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+    #else
+    return String(cString: strerror(code))
+    #endif
 }
 
 /// Executes the given closure with the C string representations of the provided arguments.
