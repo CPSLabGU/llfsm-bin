@@ -86,21 +86,21 @@ jobs:
         name: Compile Binaries
         run: |
           cd ${{ github.workspace }}\LLFSMGenerate && swift build -c release
-          copy ${{ github.workspace }}\LLFSMGenerate\.build\release\llfsm-generate.exe .
+          copy ${{ github.workspace }}\LLFSMGenerate\.build\release\llfsm-generate.exe ${{ github.workspace }}
           cd ${{ github.workspace }}\VHDLModelChecker && swift build -c release
-          copy ${{ github.workspace }}\VHDLModelChecker\.build\release\llfsm-verify.exe .
+          copy ${{ github.workspace }}\VHDLModelChecker\.build\release\llfsm-verify.exe ${{ github.workspace }}
           cd ${{ github.workspace }}\llfsm-bin && swift build -c release
-          copy ${{ github.workspace }}\llfsm-bin\.build\release\llfsm.exe .
+          copy ${{ github.workspace }}\llfsm-bin\.build\release\llfsm.exe ${{ github.workspace }}
 
       - if: ${{ runner.os != 'Windows' }}
         name: Compile Binaries
         run: |
           cd ${{ github.workspace }}/LLFSMGenerate && swift build -c release
-          cp ${{ github.workspace }}/LLFSMGenerate/.build/release/llfsm-generate .
+          cp ${{ github.workspace }}/LLFSMGenerate/.build/release/llfsm-generate ${{ github.workspace }}
           cd ${{ github.workspace }}/VHDLModelChecker && swift build -c release
-          cp ${{ github.workspace }}/VHDLModelChecker/.build/release/llfsm-verify .
+          cp ${{ github.workspace }}/VHDLModelChecker/.build/release/llfsm-verify ${{ github.workspace }}
           cd ${{ github.workspace }}/llfsm-bin && swift build -c release
-          cp ${{ github.workspace }}/llfsm-bin/.build/release/llfsm .
+          cp ${{ github.workspace }}/llfsm-bin/.build/release/llfsm ${{ github.workspace }}
     
       - name: Upload Release Artifacts
         uses: actions/upload-artifact@v7
