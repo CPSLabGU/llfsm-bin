@@ -209,7 +209,8 @@ private func shellExecutable() -> URL {
 /// Returns the shell arguments for executing the given command on the current platform.
 private func shellArguments(_ command: String) -> [String] {
     #if os(Windows)
-    ["/c", command]
+    // cmd.exe applies special quote handling to a single quoted /c argument, so pass the words separately.
+    ["/c"] + command.split(separator: " ").map(String.init)
     #else
     ["-c", command]
     #endif
