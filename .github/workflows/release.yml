@@ -82,21 +82,35 @@ jobs:
       #- name: Reconfigure Private Repo URLs
       #  run: sed -i 's/git@github.com:/https:\/\/${{ secrets.ACCESS_TOKEN }}@github.com\//g' Package.swift
 
-      - name: Compile Binaries
+      - if: ${{ runner.os == 'Windows' }}
+        name: Compile Binaries
+        run: |
+          cd ${{ github.workspace }}\LLFSMGenerate && swift build -c release
+          copy ${{ github.workspace }}\LLFSMGenerate\.build\release\llfsm-generate.exe .
+          cd ${{ github.workspace }}\VHDLModelChecker && swift build -c release
+          copy ${{ github.workspace }}\VHDLModelChecker\.build\release\llfsm-verify.exe .
+          cd ${{ github.workspace }}\llfsm-bin && swift build -c release
+          copy ${{ github.workspace }}\llfsm-bin\.build\release\llfsm.exe .
+
+      - if: ${{ runner.os != 'Windows' }}
+        name: Compile Binaries
         run: |
           cd ${{ github.workspace }}/LLFSMGenerate && swift build -c release
+          cp ${{ github.workspace }}/LLFSMGenerate/.build/release/llfsm-generate .
           cd ${{ github.workspace }}/VHDLModelChecker && swift build -c release
+          cp ${{ github.workspace }}/VHDLModelChecker/.build/release/llfsm-verify .
           cd ${{ github.workspace }}/llfsm-bin && swift build -c release
+          cp ${{ github.workspace }}/llfsm-bin/.build/release/llfsm .
     
       - name: Upload Release Artifacts
         uses: actions/upload-artifact@v7
         with:
           name: llfsm_${{ runner.os }}_${{ runner.arch }}
           path: |
-            LLFSMGenerate/.build/release/llfsm-generate
-            LLFSMGenerate/.build/release/llfsm-generate.exe
-            VHDLModelChecker/.build/release/llfsm-verify
-            VHDLModelChecker/.build/release/llfsm-verify.exe
-            llfsm-bin/.build/release/llfsm
-            llfsm-bin/.build/release/llfsm.exe
+            llfsm-generate
+            llfsm-generate.exe
+            llfsm-verify
+            llfsm-verify.exe
+            llfsm
+            llfsm.exe
           include-hidden-files: true
