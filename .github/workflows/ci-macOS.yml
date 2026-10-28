@@ -1,0 +1,16 @@
+name: MacOS CI
+
+on:
+  push:
+    branches: [development, main]
+  pull_request:
+    branches: [development, main]
+  schedule:
+    - cron: '0 16 * * *'
+  workflow_dispatch:
+
+jobs:
+  ci_macos:
+    uses: cpslabgu/swift-workflows/.github/workflows/ci-macOS.yml@main
+    secrets:
+      SSH_PRIVATE_KEY: ${{ secrets.WORKFLOWS_SSH_PRIVATE_KEY }}

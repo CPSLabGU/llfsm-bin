@@ -1,0 +1,11 @@
+name: API Stability CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  api-stability:
+    uses: cpslabgu/swift-workflows/.github/workflows/api-stability.yml@main
+    secrets:
+      SSH_PRIVATE_KEY: ${{ secrets.WORKFLOWS_SSH_PRIVATE_KEY }}
+      SSH_PUBLIC_KEY: ${{ secrets.WORKFLOWS_SSH_PUBLIC_KEY }}

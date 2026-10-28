@@ -1,0 +1,18 @@
+name: Swift Coverage Test
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+  push:
+    branches: [development, main]
+
+jobs:
+  cov:
+    uses: cpslabgu/swift-workflows/.github/workflows/cov.yml@main
+    with:
+      MINIMUM_COVERAGE: 95
+    secrets:
+      SSH_PRIVATE_KEY: ${{ secrets.WORKFLOWS_SSH_PRIVATE_KEY }}
+      SSH_PUBLIC_KEY: ${{ secrets.WORKFLOWS_SSH_PUBLIC_KEY }}
