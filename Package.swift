@@ -52,7 +52,7 @@ let package = Package(
         ),
         .testTarget(
             name: "CommandUtilsTests",
-            dependencies: [.target(name: "CommandUtils")]
+            dependencies: [.target(name: "CommandUtils"), .target(name: "ProcessTree")]
         ),
     ]
 )

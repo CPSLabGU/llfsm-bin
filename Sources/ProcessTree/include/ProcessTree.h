@@ -15,6 +15,11 @@ int process_tree_run(
     int32_t *exit_status
 );
 
+#ifdef _WIN32
+/* Requests a graceful shutdown of the running process tree without sending a console event. */
+void process_tree_request_shutdown(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

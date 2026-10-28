@@ -18,6 +18,10 @@ static BOOL WINAPI process_tree_console_handler(DWORD control_type) {
     return FALSE;
 }
 
+void process_tree_request_shutdown(void) {
+    InterlockedExchange(&process_tree_control_signal, 1);
+}
+
 static wchar_t *process_tree_utf8_to_wide(const char *value) {
     int length = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, value, -1, NULL, 0);
     if (length == 0) {

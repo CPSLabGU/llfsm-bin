@@ -1,6 +1,7 @@
 import ArgumentParser
 import CommandUtils
 import Foundation
+import ProcessTree
 import Testing
 
 #if os(Linux)
@@ -230,7 +231,9 @@ private func makeTemporaryDirectory() throws -> URL {
     return directory
 }
 
-/// Schedules a console break event to be sent after the specified file appears.
+/// Schedules a graceful shutdown request after the specified file appears.
+///
+/// This avoids `GenerateConsoleCtrlEvent`, which would broadcast to every process on the console.
 private func scheduleConsoleBreak(afterFileAppears file: URL) {
     DispatchQueue.global()
         .async {
@@ -241,7 +244,7 @@ private func scheduleConsoleBreak(afterFileAppears file: URL) {
             guard FileManager.default.fileExists(atPath: file.path) else {
                 return
             }
-            _ = GenerateConsoleCtrlEvent(DWORD(CTRL_BREAK_EVENT), 0)
+            process_tree_request_shutdown()
         }
 }
 
