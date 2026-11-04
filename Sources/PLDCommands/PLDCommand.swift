@@ -1,43 +1,53 @@
 import ArgumentParser
-import CommandUtils
 import Foundation
+import GeneratorCommands
+import LLFSMVerifyCommands
 
 /// The `pld` sub-command invoked from the `llfsm` binary.
-public struct PLDCommand: ParsableCommand, SystemDelegator {
+public struct PLDCommand: ParsableCommand {
 
     /// The command configuration for the `pld` sub-command.
     public static let configuration = CommandConfiguration(
-        commandName: "pld",
-        abstract: "Perform operations for LLFSMs deploying to Programmable Logic Devices (PLDs).",
-        usage: PLDSubCommand.allCases.map { "pld \($0.rawValue)" }.joined(separator: "\n")
+        commandName: "fpga",
+        abstract:
+            "Perform operations for LLFSMs deploying to Programmable Logic Devices such as FPGAs.",
+        subcommands: [
+            PLDGenerateCommand.self,
+            PLDVerifyCommand.self,
+        ]
     )
-
-    /// The sub-command to execute.
-    @Argument(help: "The sub-command to execute.")
-    var command: PLDSubCommand
-
-    /// The arguments of the sub-command.
-    @Argument(help: "The sub-command arguments.")
-    var arguments: [String]
 
     /// Default init.
     public init() {}
-
-    /// Delegate to an existing binary.
-    public func run() throws {
-        try executeCommand(
-            name: "llfsm-\(command.rawValue)\(String.binaryExtension)",
-            arguments: self.arguments
-        )
-    }
 }
 
-/// The supported sub-commands for the `llfsm pld` invocation.
-public enum PLDSubCommand: String, ExpressibleByArgument, CaseIterable, Equatable, Hashable, Codable, Sendable
-{
-    /// Delegate to `llfsm-generate`.
-    case generate
+/// Renamed wrapper around `LLFSMGenerate`.
+struct PLDGenerateCommand: ParsableCommand {
 
-    /// Delegate to `llfsm-verify`.
-    case verify
+    /// The configuration of the `LLFSMGenerate` command.
+    static let configuration = CommandConfiguration(
+        commandName: "generate",
+        abstract: LLFSMGenerate.configuration.abstract,
+        version: LLFSMGenerate.configuration.version,
+        subcommands: LLFSMGenerate.configuration.subcommands
+    )
+}
+
+/// Renamed wrapper around `LLFSMVerify`.
+struct PLDVerifyCommand: ParsableCommand {
+
+    /// The configuration of the `LLFSMVerify` command.
+    static let configuration = CommandConfiguration(
+        commandName: "verify",
+        abstract: LLFSMVerify.configuration.abstract,
+        version: LLFSMVerify.configuration.version,
+    )
+
+    /// The `LLFSMVerify arguments.`
+    @OptionGroup var verify: LLFSMVerify
+
+    /// Delegate to `LLFSMVerify.run`.
+    func run() throws {
+        try verify.run()
+    }
 }

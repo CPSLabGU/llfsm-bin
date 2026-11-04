@@ -1,6 +1,15 @@
 {
-  "originHash" : "c7b345a2e69fce47526e16afadff59d4e66bf29a4343965d416943715f6b3a0d",
+  "originHash" : "3ede73a84ab8eb501b2bc055374469a029ebe985a40b21fd0cf0aafb38571595",
   "pins" : [
+    {
+      "identity" : "llfsmgenerate",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CPSLabGU/LLFSMGenerate.git",
+      "state" : {
+        "revision" : "757babfb260e9d1c8213891c83f39d8f1683055f",
+        "version" : "3.0.1"
+      }
+    },
     {
       "identity" : "swift-argument-parser",
       "kind" : "remoteSourceControl",
@@ -26,6 +35,78 @@
       "state" : {
         "revision" : "b45d1f2ed151d057b54504d653e0da5552844e34",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swiftutils",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CPSLabGU/SwiftUtils.git",
+      "state" : {
+        "revision" : "f2f119d86c389272bbd98dfeda12d268b85a987e",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "tctlparser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/cpslabgu/TCTLParser",
+      "state" : {
+        "revision" : "40e0958aec40d34dddf12c029a5716d4411668a7",
+        "version" : "3.0.0"
+      }
+    },
+    {
+      "identity" : "vhdljsmodels",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CPSLabGU/VHDLJSModels",
+      "state" : {
+        "revision" : "85be508beb43d9625427817479fcf998eebd18ab",
+        "version" : "2.0.0"
+      }
+    },
+    {
+      "identity" : "vhdlkripkestructuregenerator",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mipalgu/VHDLKripkeStructureGenerator.git",
+      "state" : {
+        "revision" : "3077abd2ae3447bc01d7c2b6a1d8d1841194a873",
+        "version" : "0.6.0"
+      }
+    },
+    {
+      "identity" : "vhdlkripkestructures",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/cpslabgu/VHDLKripkeStructures",
+      "state" : {
+        "revision" : "2a618c205f99f19f02af83c0c7a83bf59fc5770b",
+        "version" : "2.0.0"
+      }
+    },
+    {
+      "identity" : "vhdlmachines",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mipalgu/VHDLMachines",
+      "state" : {
+        "revision" : "f455c5275b1975eaa506a28208e5e50555c7f9c7",
+        "version" : "4.1.0"
+      }
+    },
+    {
+      "identity" : "vhdlmodelchecker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CPSLabGU/VHDLModelChecker.git",
+      "state" : {
+        "revision" : "e4d43035cb8b8514af548389d344e0cbefa807f5",
+        "version" : "0.2.0"
+      }
+    },
+    {
+      "identity" : "vhdlparsing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mipalgu/VHDLParsing",
+      "state" : {
+        "revision" : "bf9bb912353110abf2ddcca2992ac7a85830c76d",
+        "version" : "2.7.0"
       }
     }
   ],

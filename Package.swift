@@ -15,6 +15,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.3.0"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.4.0"),
+        .package(url: "https://github.com/CPSLabGU/LLFSMGenerate.git", from: "3.0.1"),
+        .package(url: "https://github.com/CPSLabGU/VHDLModelChecker.git", from: "0.2.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -25,40 +27,27 @@ let package = Package(
                 .target(name: "PLDCommands")
             ],
             swiftSettings: [
-                .enableUpcomingFeature("ApproachableConcurrency")
+                .enableUpcomingFeature("ApproachableConcurrency"),
+                .unsafeFlags(["-parse-as-library"], .when(platforms: [.windows])),
             ],
         ),
         .target(
             name: "PLDCommands",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                .target(name: "CommandUtils"),
+                .product(name: "LLFSMGenerate", package: "LLFSMGenerate"),
+                .product(name: "LLFSMVerify", package: "VHDLModelChecker"),
             ],
-            swiftSettings: [
-                .enableUpcomingFeature("ApproachableConcurrency")
-            ],
-        ),
-        .target(
-            name: "CommandUtils",
-            dependencies: [
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                .target(name: "ProcessTree"),
-            ]
-        ),
-        .target(
-            name: "ProcessTree",
-            publicHeadersPath: "include"
-        ),
-        .testTarget(
-            name: "llfsm_binTests",
-            dependencies: [.target(name: "llfsm_bin"), .target(name: "CommandUtils")],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency")
             ],
         ),
         .testTarget(
-            name: "CommandUtilsTests",
-            dependencies: [.target(name: "CommandUtils"), .target(name: "ProcessTree")]
+            name: "llfsm_binTests",
+            dependencies: [.target(name: "llfsm_bin")],
+            swiftSettings: [
+                .enableUpcomingFeature("ApproachableConcurrency")
+            ],
         ),
     ]
 )
