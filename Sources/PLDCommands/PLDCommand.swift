@@ -43,10 +43,10 @@ struct PLDVerifyCommand: ParsableCommand {
         version: LLFSMVerify.configuration.version,
     )
 
-    /// The `LLFSMVerify arguments.`
+    /// The ``LLFSMVerify`` arguments.
     @OptionGroup var verify: LLFSMVerify
 
-    /// Delegate to `LLFSMVerify.run`.
+    /// Delegate to ``LLFSMVerify.run``.
     func run() throws {
         try verify.run()
     }
