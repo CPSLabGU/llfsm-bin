@@ -1,7 +1,7 @@
 FROM swift:6.4-resolute
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends unzip wget ca-certificates \
+    && apt-get install -y --no-install-recommends unzip wget ca-certificates libsqlite3-dev \
     && rm -rf /var/lib/apt/lists/* \
     && ARCH="$(dpkg --print-architecture)" \
     && wget -O /tmp/swiftlint.zip "https://github.com/realm/SwiftLint/releases/latest/download/swiftlint_linux_${ARCH}.zip" \
