@@ -6,6 +6,7 @@ import PackageDescription
 /// Package manifest.
 let package = Package(
     name: "llfsm-bin",
+    platforms: [.macOS(.v13)],
     products: [
         .executable(
             name: "llfsm",
