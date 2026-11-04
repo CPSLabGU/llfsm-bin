@@ -49,6 +49,8 @@ let package = Package(
                 .target(name: "llfsm_bin"),
                 .target(name: "PLDCommands"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "LLFSMGenerate", package: "LLFSMGenerate"),
+                .product(name: "LLFSMVerify", package: "VHDLModelChecker"),
             ],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency")
