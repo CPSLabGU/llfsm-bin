@@ -45,7 +45,11 @@ let package = Package(
         ),
         .testTarget(
             name: "llfsm_binTests",
-            dependencies: [.target(name: "llfsm_bin")],
+            dependencies: [
+                .target(name: "llfsm_bin"),
+                .target(name: "PLDCommands"),
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency")
             ],
